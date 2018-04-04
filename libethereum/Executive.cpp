@@ -185,6 +185,19 @@ void Executive::initialize(Transaction const& _transaction)
     try
     {
         m_sealEngine.verifyTransaction(ImportRequirements::Everything, m_t, m_envInfo.header(), m_envInfo.gasUsed());
+
+        eth::EVMSchedule const& schedule = m_sealEngine.evmSchedule(m_envInfo.header().number());
+
+        // Pre calculate the gas needed for execution
+        if (m_t.baseGasRequired(schedule) > m_t.gas())
+            BOOST_THROW_EXCEPTION(OutOfGasIntrinsic() << RequirementError(
+                                      (bigint)(m_t.baseGasRequired(schedule)), (bigint)m_t.gas()));
+
+        // Avoid transactions that would take us beyond the block gas limit.
+        if (m_envInfo.gasUsed() + (bigint)m_t.gas() > m_envInfo.header().gasLimit())
+            BOOST_THROW_EXCEPTION(BlockGasLimitReached() << RequirementError(
+                                      (bigint)(m_envInfo.header().gasLimit() - m_envInfo.gasUsed()),
+                                      (bigint)m_t.gas()));
     }
     catch (Exception const& ex)
     {
