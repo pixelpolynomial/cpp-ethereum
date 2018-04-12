@@ -346,7 +346,6 @@ js::mObject prepareFromGeneralConfig(js::mObject const& _config)
     // Overwrite genesis fields
     // Minimum fields from state tests
     cppGenesis[c_author] = genGenesis.at("coinbase");
-    cppGenesis[c_difficulty] = genGenesis.at(c_difficulty);
     cppGenesis[c_gasLimit] = genGenesis.at(c_gasLimit);
     cppGenesis[c_timestamp] = genGenesis.at(c_timestamp);
     return v.get_obj();

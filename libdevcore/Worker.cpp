@@ -92,10 +92,7 @@ void Worker::startWorking()
 //		cnote << "Spawning" << m_name;
 	}
 
-    //    m_state = WorkerState::Started;
-    //    return;
-
-    DEV_TIMED_ABOVE("Start worker", 100)
+	DEV_TIMED_ABOVE("Start worker", 100)
 		while (m_state == WorkerState::Starting)
 			m_state_notifier.wait(l);
 }
@@ -110,10 +107,7 @@ void Worker::stopWorking()
 			return;
 		m_state_notifier.notify_all();
 
-        //        m_state = WorkerState::Stopped;
-        //        return;
-
-        DEV_TIMED_ABOVE("Stop worker", 100)
+		DEV_TIMED_ABOVE("Stop worker", 100)
 			while (m_state != WorkerState::Stopped)
 				m_state_notifier.wait(l); // but yes who can wake this up, when the mutex is taken.
 	}
